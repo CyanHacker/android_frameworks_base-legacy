@@ -68,7 +68,8 @@ public class NotificationHelper {
 
     private TelephonyManager mTelephonyManager;
     private BaseStatusBar mStatusBar;
-
+    private ActivityManager mActivityManager;
+	
     public boolean mRingingOrConnected = false;
 
     private Context mContext;
