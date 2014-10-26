@@ -3870,7 +3870,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
-    @Override
     public void animateStatusBarOut() {
         // ensure to not overload
         if (mStatusBarView.getVisibility() == View.VISIBLE) {
@@ -3883,7 +3882,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
-    @Override
     public void animateStatusBarIn() {
         // ensure to not overload
         if (mStatusBarView.getVisibility() == View.GONE) {
@@ -4656,11 +4654,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         updateExpandedViewPos(EXPANDED_LEAVE_ALONE);
 
-        // Workaround to update drawable
-        // resources of pie on theme changes
-        attachPieContainer(!isPieEnabled());
-        attachPieContainer(isPieEnabled());
-
         checkBarModes();
 
         updateHalo();
@@ -4703,7 +4696,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (density != mCurrentDensity) {
             mCurrentDensity = density;
             recreateStatusBar(true);
-            recreatePie(isPieEnabled());
             setTakenSpace();
             updateOrientation();
             return;
