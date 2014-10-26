@@ -193,9 +193,6 @@
     <!-- Content description of the halo button in the notification panel for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_halo">Create notification halo.</string>
 
-    <!-- Content description of the hover button in the notification panel for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
-    <string name="accessibility_hover">Create notification hover.</string>
-
     <!-- Halo -->
     <string name="halo_dismiss">Dismiss notification</string>
     <string name="halo_hide">Hide</string>
@@ -254,9 +251,6 @@
     <!-- Title shown when app provides no interface -->
     <string name="status_bar_floating_no_interface">App provides no interface</string>
 
-    <!-- First time run hover -->
-    <string name="hover_cling_text">Hover is now enabled.\n\nWhen a new notification arrives, an overlay will show allowing you to respond to it without leaving current app.</string>
-
     <!-- Swipe recents for floating window confirmation dialog -->
     <string name="recents_swipe_floating_title">Swipe recents to float</string>
     <string name="recents_swipe_floating_message_portrait">Would you like to swipe left to open apps in floating window?</string>
@@ -287,5 +281,4 @@
     <string name="pie_hour_format_12">hh:mm</string>
     <string name="pie_hour_format_24">HH:mm</string>
     <string name="pie_am_pm">a</string>
-
 </resources>
