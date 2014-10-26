@@ -18,6 +18,8 @@ package com.android.systemui.statusbar.notification;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +29,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
+import android.content.ComponentName;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.LightingColorFilter;
@@ -75,6 +78,15 @@ public class NotificationHelper {
         mStatusBar = statusBar;
         mTelephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         mTelephonyManager.listen(new CallStateListener(), PhoneStateListener.LISTEN_CALL_STATE);
+		
+		// we need to know which is the foreground app
+        mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+    }
+
+    public String getForegroundPackageName() {
+        List<RunningTaskInfo> taskInfo = mActivityManager.getRunningTasks(1);
+        ComponentName componentInfo = taskInfo.get(0).topActivity;
+        return componentInfo.getPackageName();
     }
 
     /**
@@ -111,11 +123,10 @@ public class NotificationHelper {
         NotificationClicker intent = null;
         final PendingIntent contentIntent = entry.notification.getNotification().contentIntent;
         if (contentIntent != null) {
-            intent = mHover.getStatusBar().makeClicker(contentIntent,
+            intent = makeClicker(contentIntent,
                     entry.notification.getPackageName(), entry.notification.getTag(),
                     entry.notification.getId());
             boolean makeFloating = floating
-                    && !isNotificationBlacklisted(entry.notification.getPackageName())
                     // if the notification is from the foreground app, don't open in floating mode
                     && !entry.notification.getPackageName().equals(getForegroundPackageName())
                     && openInFloatingMode();
