@@ -69,6 +69,7 @@ import android.provider.Settings;
 import android.service.dreams.DreamService;
 import android.service.dreams.IDreamManager;
 import android.service.notification.StatusBarNotification;
+import android.service.gesture.EdgeGestureManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Slog;
@@ -277,7 +278,10 @@ public abstract class BaseStatusBar extends SystemUI implements
     public NotificationData getNotifications() {
         return mNotificationData;
     }
-
+	
+    public RemoteViews.OnClickHandler getNotificationClickHandler() {
+        return mOnClickHandler;
+    }
     private ContentObserver mProvisioningObserver = new ContentObserver(mHandler) {
         @Override
         public void onChange(boolean selfChange) {
