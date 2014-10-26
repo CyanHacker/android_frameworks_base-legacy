@@ -567,12 +567,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.QUICK_TILES_BG_ALPHA),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.PIE_CONTROLS), false, this,
-                    UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.EXPANDED_DESKTOP_STATE), false, this,
-                    UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.REMINDER_ALERT_ENABLED), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -739,12 +733,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     mNotificationShortcutsLayout.updateShortcuts();
                 }
             } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.PIE_CONTROLS))) {
-                attachPieContainer(isPieEnabled());
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.EXPANDED_DESKTOP_STATE))) {
-                mNavigationBarOverlay.setIsExpanded(isExpanded());
-            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.SHAKE_LISTENER_ENABLED))) {
                 updateShakeListener();
             } else if (uri.equals(Settings.System.getUriFor(
@@ -895,18 +883,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     resolver, Settings.System.STATUS_BAR_CARRIER, 0) == 1;
                     showStatusBarCarrierLabel(mShowStatusBarCarrier);
         }
-    }
-
-    private boolean isPieEnabled() {
-        return Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.PIE_CONTROLS, 0,
-                UserHandle.USER_CURRENT) == 1;
-    }
-
-    private boolean isExpanded() {
-        return Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.EXPANDED_DESKTOP_STATE, 0,
-                UserHandle.USER_CURRENT) == 1;
     }
 
     private void updateBatteryIcons() {
@@ -1376,7 +1352,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
             mNavigationBarView.setDisabledFlags(mDisabled);
             mNavigationBarView.setBar(this);
-            addNavigationBarCallback(mNavigationBarView);
             mNavigationBarView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -1385,9 +1360,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
             });
         }
-
-        // Setup pie container if enabled
-        attachPieContainer(isPieEnabled());
 
         if (mRecreating) {
         } else {
@@ -1993,8 +1965,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         prepareNavigationBarView();
 
         mWindowManager.addView(mNavigationBarView, getNavigationBarLayoutParams());
-        mNavigationBarOverlay.setNavigationBar(mNavigationBarView);
-        mNavigationBarOverlay.setIsExpanded(isExpanded());
     }
 
     private void repositionNavigationBar() {
@@ -2672,9 +2642,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         | StatusBarManager.DISABLE_BACK
                         | StatusBarManager.DISABLE_SEARCH)) != 0) {
 
-            // All navigation bar listeners will take care of these
-            propagateDisabledFlags(state);
-
+            // the nav bar will take care of these
+            if (mNavigationBarView != null) mNavigationBarView.setDisabledFlags(state);
             if ((state & StatusBarManager.DISABLE_RECENT) != 0) {
                 // close recents if it's visible
                 mHandler.removeMessages(MSG_CLOSE_RECENTS_PANEL);
@@ -3589,7 +3558,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mNavigationIconHints = hints;
 
-        propagateNavigationIconHints(hints);
+        if (mNavigationBarView != null) {
+            mNavigationBarView.setNavigationIconHints(hints);
+        }
 
         checkBarModes();
     }
@@ -3895,7 +3866,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             Log.d(TAG, (showMenu?"showing":"hiding") + " the MENU button");
         }
 
-        propagateMenuVisibility(showMenu);
+        if (mNavigationBarView != null) {
+            mNavigationBarView.setMenuVisibility(showMenu);
+        }
 
         // See above re: lights-out policy for legacy apps.
         if (showMenu) setLightsOn(true);
@@ -4769,8 +4742,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // resources of pie on theme changes
         attachPieContainer(!isPieEnabled());
         attachPieContainer(isPieEnabled());
-
-        restorePieTriggerMask();
 
         checkBarModes();
 
