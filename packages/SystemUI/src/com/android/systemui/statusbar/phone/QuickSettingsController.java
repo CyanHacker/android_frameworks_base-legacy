@@ -59,7 +59,6 @@ import static com.android.internal.util.liquid.QSConstants.TILE_REBOOT;
 import static com.android.internal.util.liquid.QSConstants.TILE_ONTHEGO;
 import static com.android.internal.util.liquid.QSConstants.TILE_FCHARGE;
 import static com.android.internal.util.liquid.QSConstants.TILE_PROFILE;
-import static com.android.internal.util.liquid.QSConstants.TILE_HOVER;
 import static com.android.internal.util.liquid.QSConstants.TILE_REMOTEDISPLAY;
 
 import android.content.BroadcastReceiver;
@@ -120,7 +119,6 @@ import com.android.systemui.quicksettings.RebootTile;
 import com.android.systemui.quicksettings.OnTheGoTile;
 import com.android.systemui.quicksettings.FastChargeTile;
 import com.android.systemui.quicksettings.ProfileTile;
-import com.android.systemui.quicksettings.HoverTile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -285,9 +283,7 @@ public class QuickSettingsController {
                 qs = new BatterySaverTile(mContext, this);
             } else if (tile.equals(TILE_PROFILE)) {
                 qs = new ProfileTile(mContext, this);
-            } else if (tile.equals(TILE_HOVER)) {
-                qs = new HoverTile(mContext, this);
-            }
+            } 
 
             if (qs != null) {
                 qs.setupQuickSettingsTile(inflater, mContainerView);

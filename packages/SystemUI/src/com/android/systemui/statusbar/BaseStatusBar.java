@@ -107,7 +107,6 @@ import com.android.systemui.statusbar.phone.KeyguardTouchDelegate;
 import com.android.systemui.statusbar.halo.Halo;
 import com.android.systemui.statusbar.phone.NavigationBarOverlay;
 import com.android.systemui.statusbar.notification.NotificationHelper;
-import com.android.systemui.statusbar.notification.Peek;
 import com.android.systemui.statusbar.policy.NotificationRowLayout;
 import com.android.systemui.statusbar.policy.activedisplay.ActiveDisplayView;
 import com.android.systemui.chaos.lab.gestureanywhere.GestureAnywhereView;
@@ -218,9 +217,6 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     // Notification helper
     protected NotificationHelper mNotificationHelper;
-
-    // Peek
-    protected Peek mPeek;
 
     // UI-specific methods
 
@@ -396,10 +392,7 @@ public abstract class BaseStatusBar extends SystemUI implements
 
         mStatusBarContainer = new FrameLayout(mContext);
 
-        mPeek = new Peek(this, mContext);
         mNotificationHelper = new NotificationHelper(this, mContext);
-
-        mPeek.setNotificationHelper(mNotificationHelper);
 
         // Connect in to the status bar manager service
         StatusBarIconList iconList = new StatusBarIconList();
@@ -550,11 +543,6 @@ public abstract class BaseStatusBar extends SystemUI implements
     public NotificationHelper getNotificationHelperInstance() {
         if (mNotificationHelper == null) mNotificationHelper = new NotificationHelper(this, mContext);
         return mNotificationHelper;
-    }
-
-    public Peek getPeekInstance() {
-        if (mPeek == null) mPeek = new Peek(this, mContext);
-        return mPeek;
     }
 
     public PowerManager getPowerManagerInstance() {
@@ -1363,8 +1351,6 @@ public abstract class BaseStatusBar extends SystemUI implements
             animateCollapsePanels(CommandQueue.FLAG_EXCLUDE_NONE);
             visibilityChanged(false);
 
-            // hide notification peek screen
-            mPeek.dismissNotification();
         }
     }
 
@@ -1412,8 +1398,6 @@ public abstract class BaseStatusBar extends SystemUI implements
         if (rowParent != null) rowParent.removeView(entry.row);
         updateExpansionStates();
         updateNotificationIcons();
-
-        mPeek.removeNotification(entry.notification);
 
         return entry.notification;
     }
@@ -1541,17 +1525,7 @@ public abstract class BaseStatusBar extends SystemUI implements
         updateExpansionStates();
         updateNotificationIcons();
         mHandler.removeCallbacks(mPanelCollapseRunnable);
-
-        if (!mPowerManager.isScreenOn()) {
-            // screen off - check if peek is enabled
-            if (mNotificationHelper.isPeekEnabled()) {
-                mPeek.showNotification(entry.notification, false);
-            } else {
-                mPeek.addNotification(entry.notification);
-            }
-        } else {
-            mPeek.addNotification(entry.notification);
-        }
+		
     }
 
     private void addNotificationViews(IBinder key, StatusBarNotification notification) {
@@ -1758,16 +1732,6 @@ public abstract class BaseStatusBar extends SystemUI implements
         // Update the roundIcon
         prepareHaloNotification(entry, notification, true);
 
-        if (!mPowerManager.isScreenOn()) {
-            // screen off - check if peek is enabled
-            if (mNotificationHelper.isPeekEnabled()) {
-                mPeek.showNotification(entry.notification, true);
-            } else {
-                mPeek.addNotification(entry.notification);
-            }
-        } else {
-            mPeek.addNotification(entry.notification);
-        }
     }
 
     protected void notifyHeadsUpScreenOn(boolean screenOn) {

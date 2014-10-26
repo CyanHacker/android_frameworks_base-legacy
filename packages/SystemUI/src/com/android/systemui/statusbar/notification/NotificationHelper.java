@@ -65,7 +65,6 @@ public class NotificationHelper {
 
     private TelephonyManager mTelephonyManager;
     private BaseStatusBar mStatusBar;
-    private Peek mPeek;
 
     public boolean mRingingOrConnected = false;
 
@@ -74,21 +73,8 @@ public class NotificationHelper {
     public NotificationHelper(BaseStatusBar statusBar, Context context) {
         mContext = context;
         mStatusBar = statusBar;
-        mPeek = mStatusBar.getPeekInstance();
         mTelephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         mTelephonyManager.listen(new CallStateListener(), PhoneStateListener.LISTEN_CALL_STATE);
-    }
-
-    public boolean isPeekEnabled() {
-        return mPeek.mEnabled;
-    }
-
-    public boolean isPeekShowing() {
-        return mPeek.isShowing();
-    }
-
-    public Peek getPeek() {
-        return mPeek;
     }
 
     /**
