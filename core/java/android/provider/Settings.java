@@ -3306,8 +3306,6 @@ public final class Settings {
         public static final String PIE_TRIGGER_SENSITIVITY = "pie_trigger_sensitivity";
 
         /**
-
-        /**
          * QuickSettings configuration
          * @hide
          */
