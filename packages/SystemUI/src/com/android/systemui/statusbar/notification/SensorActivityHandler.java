@@ -28,7 +28,6 @@ import android.util.Log;
 
 public class SensorActivityHandler {
 
-    private final static String TAG = "Peek.SensorActivityHandler";
 
     private final static int INCREMENTS_TO_DISABLE = 5;
     private final static float NOISE_THRESHOLD = 0.5f;
@@ -85,9 +84,6 @@ public class SensorActivityHandler {
                                     mGyroscopeSensor, SensorManager.SENSOR_DELAY_NORMAL);
                         }
                     }
-                    if (Peek.DEBUG) {
-                        Log.d(TAG, "In pocket: "+inPocket + ", old: " + mInPocket);
-                    }
                     boolean oldInPocket = mInPocket;
                     mInPocket = inPocket;
                     if (oldInPocket != inPocket) mCallback.onPocketModeChanged(mInPocket);
@@ -110,7 +106,6 @@ public class SensorActivityHandler {
                     float x = event.values[0];
                     float y = event.values[1];
                     float z = event.values[1];
-                    if (Peek.DEBUG) Log.d(TAG, "Received values: x: " + x + " y: " + y + " z: " + z);
                     boolean storeValues = false;
                     if (mHasInitialValues) {
                         float dX = Math.abs(mLastX - x);
@@ -119,7 +114,6 @@ public class SensorActivityHandler {
                         if (dX >= NOISE_THRESHOLD ||
                                 dY >= NOISE_THRESHOLD || dZ >= NOISE_THRESHOLD) {
                             if (mWaitingForMovement) {
-                                if (Peek.DEBUG) Log.d(TAG, "On table: false");
                                 mOnTable = false;
                                 mCallback.onTableModeChanged(mOnTable);
                                 registerEventListeners();
@@ -137,7 +131,6 @@ public class SensorActivityHandler {
                                 mSensorIncrement++;
                                 if (mSensorIncrement == INCREMENTS_TO_DISABLE) {
                                     unregisterProximityEvent();
-                                    if (Peek.DEBUG) Log.d(TAG, "On table: true");
                                     mOnTable = true;
                                     mCallback.onTableModeChanged(mOnTable);
                                     mWaitingForMovement = true;
@@ -191,7 +184,6 @@ public class SensorActivityHandler {
 
     public void registerProximityEvent() {
         if (!mProximityRegistered) {
-            if (Peek.DEBUG) Log.d(TAG, "Registering proximity polling");
             mSensorManager.registerListener(mProximityEventListener, mProximitySensor,
                     SensorManager.SENSOR_DELAY_NORMAL);
             mProximityRegistered = true;
@@ -200,7 +192,6 @@ public class SensorActivityHandler {
 
     public void registerGyroscopeEvent() {
         if (!mGyroscopeRegistered) {
-            if (Peek.DEBUG) Log.d(TAG, "Registering gyroscope polling");
             mSensorManager.registerListener(mGyroscopeEventListener, mGyroscopeSensor,
                     SensorManager.SENSOR_DELAY_NORMAL);
             mGyroscopeRegistered = true;
@@ -214,7 +205,6 @@ public class SensorActivityHandler {
 
     private void unregisterProximityEvent() {
         if (mProximityRegistered) {
-            if (Peek.DEBUG) Log.d(TAG, "Unregistering proximity polling");
             mSensorManager.unregisterListener(mProximityEventListener);
             mProximityRegistered = false;
         }
@@ -222,7 +212,6 @@ public class SensorActivityHandler {
 
     private void unregisterGyroscopeEvent() {
         if (mGyroscopeRegistered) {
-            if (Peek.DEBUG) Log.d(TAG, "Unregistering gyroscope polling");
             mSensorManager.unregisterListener(mGyroscopeEventListener);
             mLastX = mLastY = mLastZ = 0;
             mSensorIncrement = 0;
@@ -241,11 +230,9 @@ public class SensorActivityHandler {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-                if (Peek.DEBUG) Log.d(TAG, "Screen is off");
                 mCallback.onScreenStateChaged(false);
                 registerEventListeners();
             } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-                if (Peek.DEBUG) Log.d(TAG, "Screen is on");
                 mCallback.onScreenStateChaged(true);
                 unregisterEventListeners();
                 mInPocket = false;
