@@ -47,12 +47,11 @@ import android.widget.FrameLayout;
 
 import com.android.internal.util.nameless.NamelessUtils;
 import com.android.internal.util.liquid.TorchConstants;
-import com.android.internal.util.nameless.listeners.ShakeDetector;
 import com.android.systemui.R;
 
 import java.io.IOException;
 
-public class OnTheGoService extends Service implements ShakeDetector.Listener {
+public class OnTheGoService extends Service {
 
     private static final String  TAG   = "OnTheGoService";
     private static final boolean DEBUG = false;
@@ -80,7 +79,6 @@ public class OnTheGoService extends Service implements ShakeDetector.Listener {
     private Camera              mCamera;
     private NotificationManager mNotificationManager;
     private SensorManager       mSensorManager;
-    private ShakeDetector       mShakeDetector;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -108,8 +106,6 @@ public class OnTheGoService extends Service implements ShakeDetector.Listener {
         }
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mShakeDetector = new ShakeDetector(this);
-        mShakeDetector.start(mSensorManager);
     }
 
     private void unregisterReceivers(boolean isScreenOff) {
@@ -126,11 +122,6 @@ public class OnTheGoService extends Service implements ShakeDetector.Listener {
             } catch (Exception ignored) { }
         }
 
-        if (mShakeDetector != null) {
-            mShakeDetector.stop();
-            mShakeDetector = null;
-            mSensorManager = null;
-        }
     }
 
     private final BroadcastReceiver mAlphaReceiver = new BroadcastReceiver() {
@@ -479,26 +470,5 @@ public class OnTheGoService extends Service implements ShakeDetector.Listener {
             result = (info.orientation - degrees + 360) % 360;
         }
         mCamera.setDisplayOrientation(result);
-    }
-
-    private final        Object  mShakeLock     = new Object();
-    private final static int     SHAKE_TIMEOUT  = 1000;
-    private              boolean mIsShakeLocked = false;
-
-    @Override
-    public void hearShake() {
-        synchronized (mShakeLock) {
-            if (!mIsShakeLocked) {
-                final Intent intent = new Intent(TorchConstants.ACTION_TOGGLE_STATE);
-                sendBroadcastAsUser(intent, UserHandle.CURRENT);
-                mIsShakeLocked = true;
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mIsShakeLocked = false;
-                    }
-                }, SHAKE_TIMEOUT);
-            }
-        }
     }
 }
