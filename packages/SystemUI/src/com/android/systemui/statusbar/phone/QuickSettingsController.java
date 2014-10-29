@@ -59,9 +59,8 @@ import static com.android.internal.util.liquid.QSConstants.TILE_REBOOT;
 import static com.android.internal.util.liquid.QSConstants.TILE_ONTHEGO;
 import static com.android.internal.util.liquid.QSConstants.TILE_FCHARGE;
 import static com.android.internal.util.liquid.QSConstants.TILE_PROFILE;
-import static com.android.internal.util.liquid.QSConstants.TILE_HOVER;
 import static com.android.internal.util.liquid.QSConstants.TILE_REMOTEDISPLAY;
-
+import static com.android.internal.util.liquid.QSConstants.TILE_NETWORKADB;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -97,6 +96,7 @@ import com.android.systemui.quicksettings.LteTile;
 import com.android.systemui.quicksettings.MobileNetworkTile;
 import com.android.systemui.quicksettings.MobileNetworkTypeTile;
 import com.android.systemui.quicksettings.MusicTile;
+import com.android.systemui.quicksettings.NetworkAdbTile;
 import com.android.systemui.quicksettings.NfcTile;
 import com.android.systemui.quicksettings.PreferencesTile;
 import com.android.systemui.quicksettings.QuickSettingsTile;
@@ -120,7 +120,6 @@ import com.android.systemui.quicksettings.RebootTile;
 import com.android.systemui.quicksettings.OnTheGoTile;
 import com.android.systemui.quicksettings.FastChargeTile;
 import com.android.systemui.quicksettings.ProfileTile;
-import com.android.systemui.quicksettings.HoverTile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -285,8 +284,11 @@ public class QuickSettingsController {
                 qs = new BatterySaverTile(mContext, this);
             } else if (tile.equals(TILE_PROFILE)) {
                 qs = new ProfileTile(mContext, this);
-            } else if (tile.equals(TILE_HOVER)) {
-                qs = new HoverTile(mContext, this);
+            } else if (tile.equals(TILE_NETWORKADB)) {
+                mTileStatusUris.add(Settings.Global.getUriFor(Settings.Global.ADB_ENABLED));
+                if (DeviceUtils.adbEnabled(resolver)) {
+                    qs = new NetworkAdbTile(mContext, this);
+                }
             }
 
             if (qs != null) {

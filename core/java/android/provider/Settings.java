@@ -3152,9 +3152,9 @@ public final class Settings {
          * @hide
          */
         public static final String REVERSE_LOOKUP_PROVIDER = "reverse_lookup_provider";
-
-        /**
-         * Whether pie controls are enabled
+        
+      /**  
+        * Whether pie controls are enabled
          * @hide
          */
         public static final String PIE_CONTROLS = "pie_controls";
@@ -4142,18 +4142,18 @@ public final class Settings {
          * Custom System Animations
          * @hide
          */
-        public static final String[] ACTIVITY_ANIMATION_CONTROLS = new String[] {
+        public static final String[] ACTIVITY_ANIMATION_CONTROLS = new String[] {  
                 "activity_open",
                 "activity_close",
-                "task_open",
-                "task_close",
+                "task_open",  
+                "task_close",  
                 "task_to_front",
-                "task_to_back",
-                "wallpaper_open",
-                "wallpaper_close",
-                "wallpaper_intra_open",
-                "wallpaper_intra_close",
-        };
+                "task_to_back",  
+                "wallpaper_open",  
+                "wallpaper_close",  
+                "wallpaper_intra_open",  
+                "wallpaper_intra_close",  
+        };  
         public static final String ANIMATION_CONTROLS_DURATION = "animation_controls_duration";
 
         /**
@@ -4981,13 +4981,7 @@ public final class Settings {
         public static final String CUSTOM_RECENT_TOGGLE = "custom_recent_toggle";
 
         /**
-         * Either if notification peek is enabled of disabled
-         * 0 = disabled (default)
-         * 1 = enabled
-         * @hide
-         */
-        public static final String PEEK_STATE = "peek_state";
-
+		
         /**
          * Whether the status bar is set to be colored dynamically
          * 0 = disabled (default)
@@ -5032,20 +5026,6 @@ public final class Settings {
          */
         public static final String EXPERIMENTAL_DSB_FREQUENCY = "experimental_dsb_frequency";
 
-        /**          
-         * Time to show notification
-         * 300ms = default
-         * @hide
-         */
-        public static final String PEEK_TIME = "peek_time";
-
-        /**
-         * Set the timeout of peek when pikcing up the device
-         * @hide
-         */
-        public static final String PEEK_PICKUP_TIMEOUT = "peek_pickup_timeout";
-
-        /**
          * Quick Settings Quick access ribbon
          *
          * @hide
@@ -5098,69 +5078,6 @@ public final class Settings {
          */
         public static final String DIALPAD_STATE = "dialpad_state";
 
-        /**
-         * Hover is active, default is 0 (off).
-         * 0 = disabled
-         * 1 = enabled
-         * @hide
-         */
-        public static final String HOVER_ACTIVE = "hover_active";
-
-        /**
-         * Hover: Hide HOVER-Button is StatusBar, default is 1 (on).
-         *
-         * @hide
-         */
-        public static final String HOVER_HIDE_BUTTON = "hover_hide_button";
-
-        /**
-         * Hover: Only show up if StatusBar is hidden, default is 0 (off).
-         *
-         * @hide
-         */
-        public static final String HOVER_REQUIRE_FULLSCREEN_MODE = "hover_require_fullscreen_mode";
-
-        /**
-         * Hover: Exclude non-clearable notifications, default is 0 (off).
-         *
-         * @hide
-         */
-        public static final String HOVER_EXCLUDE_NON_CLEARABLE = "hover_exclude_non_clearable";
-
-        /**
-         * Hover: Exclude low priority notifications, default is 0 (off).
-         *
-         * @hide
-         */
-        public static final String HOVER_EXCLUDE_LOW_PRIORITY = "hover_exclude_low_priority";
-
-        /**
-         * Hover: Option to exclude topmost app, default is 0 (off).
-         *
-         * @hide
-         */
-        public static final String HOVER_EXCLUDE_TOPMOST = "hover_exclude_topmost";
-
-        /**
-         * Hover: Option to exclude from lock screen, default is 0 (off).
-         *
-         * @hide
-         */
-        public static final String HOVER_EXCLUDE_FROM_LOCK_SCREEN = "hover_exclude_from_lock_screen";
-
-         /**
-         * Hover: long fade out delay, default is 5000ms (5s).
-         *
-         * @hide
-         */
-        public static final String HOVER_LONG_FADE_OUT_DELAY = "hover_long_fade_out_delay";
-
-        /**
-         * Hover: micro fade out delay, default is 1250ms (1,25s).
-         *
-         * @hide
-         */
-        public static final String HOVER_MICRO_FADE_OUT_DELAY = "hover_micro_fade_out_delay";
 
         /**
          * Whether power menu user switcher is enabled
@@ -5288,6 +5205,8 @@ public final class Settings {
 
         /**
          * Pie trigger fraction, should default to 1
+         * Quick Settings Quick access ribbon
+         *
          * @hide
          */
         public static final String PA_PIE_TRIGGER = "pa_pie_trigger";
@@ -5408,6 +5327,15 @@ public final class Settings {
          * @hide
          */
         public static final String DATA_TO_WIFI_CONNECT_TYPE = "data_to_wifi_connect_type";
+
+        /**
+         * Call recording format value
+         * 0: AMR_WB
+         * 1: MPEG_4
+         * Default: 0
+         * @hide
+         */
+        public static final String CALL_RECORDING_FORMAT = "call_recording_format";
 
          /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -5774,7 +5702,7 @@ public final class Settings {
             MOVED_TO_LOCK_SETTINGS.add(Secure.LOCK_PATTERN_VISIBLE);
             MOVED_TO_LOCK_SETTINGS.add(Secure.LOCK_PATTERN_TACTILE_FEEDBACK_ENABLED);
             MOVED_TO_LOCK_SETTINGS.add(Secure.LOCK_GESTURE_ENABLED);
-            MOVED_TO_LOCK_SETTINGS.add(Secure.LOCK_GESTURE_VISIBLE);
+            MOVED_TO_LOCK_SETTINGS.add(Secure.LOCK_GESTURE_VISIBLE);	    
 
             MOVED_TO_GLOBAL = new HashSet<String>();
             MOVED_TO_GLOBAL.add(Settings.Global.ADB_ENABLED);
@@ -7614,9 +7542,6 @@ public final class Settings {
 
         /** @hide */
         public static final String IMMERSIVE_MODE_CONFIRMATIONS = "immersive_mode_confirmations";
-
-        /** @hide */
-        public static final String HOVER_FIRST_TIME = "hover_first_time";
 
         /**
          * This is the query URI for finding a print service to install.
