@@ -5026,6 +5026,7 @@ public final class Settings {
          */
         public static final String EXPERIMENTAL_DSB_FREQUENCY = "experimental_dsb_frequency";
 
+		/**
          * Quick Settings Quick access ribbon
          *
          * @hide
