@@ -16,6 +16,10 @@
 
 package com.android.systemui;
 
+import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -47,6 +51,8 @@ import com.android.internal.util.liquid.DevUtils;
 
 import com.android.systemui.R;
 
+import com.android.systemui.statusbar.phone.BarBackgroundUpdater;
+
 public class BatteryMeterView extends View implements DemoMode {
     public static final String TAG = BatteryMeterView.class.getSimpleName();
     public static final String ACTION_LEVEL_TEST = "com.android.systemui.BATTERY_LEVEL_TEST";
@@ -75,6 +81,9 @@ public class BatteryMeterView extends View implements DemoMode {
 
     int[] mColors;
 
+    private boolean mQS = false;
+    private int mOverrideIconColor = 0;
+
     boolean mShowIcon = true;
     boolean mIsQuickSettings = false;
     boolean mShowPercent = false;
@@ -102,6 +111,8 @@ public class BatteryMeterView extends View implements DemoMode {
 
     private boolean mCustomColor;
     private int systemColor;
+
+    private final int mDSBDuration;
 
     private class BatteryTracker extends BroadcastReceiver {
         public static final int UNKNOWN_LEVEL = -1;
@@ -261,6 +272,33 @@ public class BatteryMeterView extends View implements DemoMode {
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         updateSettings(mIsQuickSettings);
+
+        mDSBDuration = context.getResources().getInteger(R.integer.dsb_transition_duration);
+        BarBackgroundUpdater.addListener(new BarBackgroundUpdater.UpdateListener(this) {
+
+            @Override
+            public Animator onUpdateStatusBarIconColor(final int previousIconColor,
+                    final int iconColor) {
+                // TODO animate this bugger
+                mOverrideIconColor = iconColor;
+                postInvalidate();
+                return null;
+            }
+
+        });
+    }
+
+    protected ObjectAnimator buildAnimator(final Paint painter, final int toColor)  {
+        final ObjectAnimator colorFader = ObjectAnimator.ofObject(painter, "backgroundColor",
+                new ArgbEvaluator(), painter.getColor(), toColor);
+        colorFader.setDuration(mDSBDuration);
+        colorFader.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(final ValueAnimator animation) {
+                invalidate();
+            }
+        });
+        return colorFader;        
     }
 
     private static float[] loadBoltPoints(Resources res) {
@@ -287,13 +325,19 @@ public class BatteryMeterView extends View implements DemoMode {
     }
 
     private int getColorForLevel(int percent) {
+        final boolean doOverride = mOverrideIconColor != 0 && !mQS;
+        
         int thresh, color = 0;
         for (int i=0; i<mColors.length; i+=2) {
             thresh = mColors[i];
             color = mColors[i+1];
-            if (percent <= thresh) return color;
+            if (percent <= thresh) {
+                // just override the last level (full battery level)
+                return (doOverride && i == mColors.length - 2) ? mOverrideIconColor : color;
+            }
         }
-        return color;
+
+        return doOverride ? mOverrideIconColor : color;        
     }
 
     @Override
@@ -340,7 +384,12 @@ public class BatteryMeterView extends View implements DemoMode {
         // first, draw the battery shape
         if (mShowIcon) {
             c.drawRect(mFrame, mFramePaint);
-        }
+        
+        // fill 'er up
+        final boolean doOverride = mOverrideIconColor != 0 && !mQS;
+        final int color = tracker.plugged ? (doOverride ? mOverrideIconColor : mChargeColor) :
+            getColorForLevel(level);
+        mBatteryPaint.setColor(color);
 
         if (level >= FULL) {
             drawFrac = 1f;
@@ -413,6 +462,8 @@ public class BatteryMeterView extends View implements DemoMode {
             }
             mTextHeight = -mTextPaint.getFontMetrics().ascent;
 
+            mTextPaint.setColor(doOverride ? mOverrideIconColor : 0xFF000000);
+            
             String str;
             if (mPercentageOnly) {
                 str = String.valueOf(SINGLE_DIGIT_PERCENT ? (level/10) : level) + "%";
