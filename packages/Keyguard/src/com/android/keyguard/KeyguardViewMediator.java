@@ -111,6 +111,9 @@ public class KeyguardViewMediator {
     private static final String DELAYED_KEYGUARD_ACTION =
         "com.android.internal.policy.impl.PhoneWindowManager.DELAYED_KEYGUARD";
 
+    private static final String SHAKE_SECURE_TIMER =
+        "com.android.keyguard.SHAKE_SECURE_TIMER";
+
     private static final String DISMISS_KEYGUARD_SECURELY_ACTION =
         "com.android.keyguard.action.DISMISS_KEYGUARD_SECURELY";
 
@@ -536,6 +539,8 @@ public class KeyguardViewMediator {
         mShowKeyguardWakeLock = mPM.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "show keyguard");
         mShowKeyguardWakeLock.setReferenceCounted(false);
 
+        mContext.registerReceiver(mBroadcastReceiver, new IntentFilter(SHAKE_SECURE_TIMER));
+
         mContext.registerReceiver(mBroadcastReceiver,
                 new IntentFilter(WindowManagerPolicy.ACTION_LID_STATE_CHANGED));
         mContext.registerReceiver(mBroadcastReceiver, new IntentFilter(DELAYED_KEYGUARD_ACTION));
@@ -931,6 +936,7 @@ public class KeyguardViewMediator {
         synchronized (KeyguardViewMediator.this) {
             if (mHidden != isHidden) {
                 mHidden = isHidden;
+                KeyguardHostView.setShakeBypassed(mHidden);
                 updateActivityLockScreenState();
                 adjustStatusBarLocked();
             }
@@ -1106,6 +1112,14 @@ public class KeyguardViewMediator {
                         mSuppressNextLockSound = true;
                         doKeyguardLocked(null);
                     }
+                }
+            } else if (SHAKE_SECURE_TIMER.equals(intent.getAction())) {
+                if (mLockPatternUtils.isSecure()) {
+                    Settings.Secure.putIntForUser(mContext.getContentResolver(),
+                            Settings.Secure.LOCK_TEMP_SECURE_MODE, 1,
+                            mLockPatternUtils.getCurrentUser());
+                    KeyguardHostView.shakeSecureNow();
+                    adjustStatusBarLocked();
                 }
             } else if (WindowManagerPolicy.ACTION_LID_STATE_CHANGED.equals(intent.getAction())) {
                 final int state = intent.getIntExtra(WindowManagerPolicy.EXTRA_LID_STATE,
@@ -1389,7 +1403,7 @@ public class KeyguardViewMediator {
                 flags |= StatusBarManager.DISABLE_RECENT;
                 final boolean isSecure = isSecure();
                 boolean tempDisable = false;
-                if (isSecure) {
+                if (isSecure && KeyguardHostView.shakeInsecure()) {
                     tempDisable = true;
                 }
                 if (isSecure || !ENABLE_INSECURE_STATUS_BAR_EXPAND) {
