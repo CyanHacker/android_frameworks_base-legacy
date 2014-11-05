@@ -115,5 +115,5 @@
   <string name="permdesc_changeHeadsUpState">Ermöglicht einer App festzulegen, ob andere Apps Heads Up Benachrichtigungen zeigen dürfen.</string>
   <string name="usb_storage_notification_manage_message">Zum Verwalten antippen</string>
   <string name="theme_install_error_title">Theme Installation fehlgeschlagen</string>
-  <string name="theme_install_error_message">%s Installation fehlgeschlagen</string>
+  <string name="theme_install_error_message">%s konnte nicht installiert werden</string>
 </resources>
