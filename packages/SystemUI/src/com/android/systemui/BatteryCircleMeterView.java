@@ -16,10 +16,6 @@
 
 package com.android.systemui;
 
-import android.animation.Animator;
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.view.ViewGroup.LayoutParams;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -49,7 +45,6 @@ import android.widget.ImageView;
 import com.android.internal.R;
 
 import com.android.systemui.BatteryMeterView;
-import com.android.systemui.statusbar.phone.BarBackgroundUpdater;
 
 /***
  * Note about CircleBattery Implementation:
@@ -101,10 +96,6 @@ public class BatteryCircleMeterView extends ImageView {
 
     private boolean mCustomColor;
     private int systemColor;
-    
-    private int mOverrideIconColor = 0;
-
-    private final int mDSBDuration;
 
     // runnable to invalidate view via mHandler.postDelayed() call
     private final Runnable mInvalidate = new Runnable() {
@@ -159,9 +150,6 @@ public class BatteryCircleMeterView extends ImageView {
         mCircleBatteryView = circleBatteryType.getString(
                 com.android.systemui.R.styleable.BatteryIcon_batteryView);
 
-        mDSBDuration = context.getResources().getInteger(com.android.systemui.R.integer
-                .dsb_transition_duration);
-                
         circleBatteryType.recycle();
 
         if (mCircleBatteryView == null) {
@@ -192,38 +180,6 @@ public class BatteryCircleMeterView extends ImageView {
         mPathEffect = new DashPathEffect(new float[]{3,2},0);
 
         updateSettings(mIsQuickSettings);
-        BarBackgroundUpdater.addListener(new BarBackgroundUpdater.UpdateListener(this) {
-
-            @Override
-            public ObjectAnimator onUpdateStatusBarIconColor(final int previousIconColor,
-                    final int iconColor) {
-                mOverrideIconColor = iconColor;
-
-                if (mQS || mOverrideIconColor == 0) {
-                    mPaintSystem.setColor(mCircleColor);
-                    mHandler.removeCallbacks(mInvalidate);
-                    mHandler.postDelayed(mInvalidate, 50);
-                } else {
-                    if (mActivated && mAttached) {
-                        final ObjectAnimator anim = ObjectAnimator.ofObject(mPaintSystem, "color",
-                                new ArgbEvaluator(), mPaintSystem.getColor(), mOverrideIconColor);
-                        anim.setDuration(mDSBDuration);
-                        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-                            @Override
-                            public void onAnimationUpdate(final ValueAnimator animator) {
-                                invalidate();
-                            }
-
-                        });
-                        return anim;
-                    }
-                }
-
-                return null;
-            }
-
-        });        
     }
 
     @Override
@@ -283,13 +239,10 @@ public class BatteryCircleMeterView extends ImageView {
         }
 
         if (mLevel > 14) {
-                if (mIsCharging) {
-                    mPaintFont.setColor(mCircleTextChargingColor);
-                } else {
-                    mPaintFont.setColor(mCircleTextColor);
-                }
-            } else {
-                mPaintFont.setColor(mOverrideIconColor);          
+          if (mIsCharging) {
+            usePaint.setColor(mCircleTextChargingColor);
+          } else {
+            usePaint.setColor(mCircleColor);
           }
         }
 
