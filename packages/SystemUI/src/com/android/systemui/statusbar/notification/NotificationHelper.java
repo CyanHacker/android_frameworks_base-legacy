@@ -172,9 +172,6 @@ public class NotificationHelper {
                 boolean title = v.getId() == android.R.id.title;
                 boolean bold = title;
                 TextView text = ((TextView) v);
-                text.setTypeface(Typeface.create(
-                                title ? FONT_FAMILY_LIGHT : FONT_FAMILY_DEFAULT),
-                                        bold ? Typeface.BOLD : Typeface.NORMAL);
             }
         }
     }
