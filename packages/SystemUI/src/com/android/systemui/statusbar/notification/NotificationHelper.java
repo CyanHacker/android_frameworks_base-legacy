@@ -66,7 +66,6 @@ import java.util.List;
 public class NotificationHelper {
 
     public final static String DELIMITER = "|";
-    public static final String DELIMITER = "|";
     public static final int DEFAULT_ALPHA = 255;
 
     private static final String FONT_FAMILY_DEFAULT = "sans-serif";
@@ -133,9 +132,9 @@ public class NotificationHelper {
         NotificationClicker intent = null;
         final PendingIntent contentIntent = entry.notification.getNotification().contentIntent;
         if (contentIntent != null) {
-            intent = makeClicker(contentIntent,
+            intent = contentIntent,
                     entry.notification.getPackageName(), entry.notification.getTag(),
-                    entry.notification.getId());
+                    entry.notification.getId();
             boolean makeFloating = floating
 					&& !isNotificationBlacklisted(entry.notification.getPackageName())
                     // if the notification is from the foreground app, don't open in floating mode
