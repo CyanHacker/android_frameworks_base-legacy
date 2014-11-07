@@ -177,9 +177,8 @@ public class NotificationHelper {
                 boolean bold = title;
                 TextView text = ((TextView) v);
                 text.setTypeface(Typeface.create(
-                        forHover ? FONT_FAMILY_CONDENSED :
-                                (title ? FONT_FAMILY_LIGHT : FONT_FAMILY_DEFAULT),
-                                        bold ? Typeface.BOLD : Typeface.NORMAL));
+                                title ? FONT_FAMILY_LIGHT : FONT_FAMILY_DEFAULT),
+                                        bold ? Typeface.BOLD : Typeface.NORMAL);
             }
         }
     }
