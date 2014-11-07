@@ -168,12 +168,12 @@ public class NotificationHelper {
         if (notificationView.getBackground() == null) {
             // if the notification has no background, use default notification background
             notificationView.setBackgroundResource(com.android.internal.R.drawable.notification_bg);
--        }
+        }
 
         List<View> subViews = getAllViewsInLayout(notificationView);
--        for(int i = 0; i < subViews.size(); i++) {
+        for(int i = 0; i < subViews.size(); i++) {
             View v = subViews.get(i);
-            else if (v instanceof TextView) { // set font family
+            if (v instanceof TextView) { // set font family
                 boolean title = v.getId() == android.R.id.title;
                 boolean bold = title;
                 TextView text = ((TextView) v);
