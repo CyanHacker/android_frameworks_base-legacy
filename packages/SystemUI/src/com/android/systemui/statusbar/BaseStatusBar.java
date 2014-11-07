@@ -283,6 +283,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     public RemoteViews.OnClickHandler getNotificationClickHandler() {
         return mOnClickHandler;
     }
+	
     private ContentObserver mProvisioningObserver = new ContentObserver(mHandler) {
         @Override
         public void onChange(boolean selfChange) {
@@ -1640,7 +1641,7 @@ public abstract class BaseStatusBar extends SystemUI implements
 
         boolean updateTicker = (notification.getNotification().tickerText != null
                 && !TextUtils.equals(notification.getNotification().tickerText,
-                        oldEntry.notification.getNotification().tickerText)) || mHaloActive;
+                        oldEntry.notification.getNotification().tickerText)) && mHaloActive;
         boolean isTopAnyway = isTopNotification(rowParent, oldEntry);
         if (contentsUnchanged && bigContentsUnchanged && (orderUnchanged || isTopAnyway)) {
             if (DEBUG) Log.d(TAG, "reusing notification for key: " + key);

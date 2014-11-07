@@ -2878,6 +2878,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mExpandedVisible || !panelsEnabled()) {
             return;
         }
+		
+		@Override
+    public boolean isExpandedVisible() {
+        return mExpandedVisible;
+    }
 
         mExpandedVisible = true;
         mPile.setLayoutTransitionsEnabled(true);

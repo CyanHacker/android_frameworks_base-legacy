@@ -22,6 +22,7 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
@@ -65,6 +66,14 @@ import java.util.List;
 public class NotificationHelper {
 
     public final static String DELIMITER = "|";
+    public static final String DELIMITER = "|";
+    public static final int DEFAULT_ALPHA = 255;
+
+    private static final String FONT_FAMILY_DEFAULT = "sans-serif";
+    private static final String FONT_FAMILY_LIGHT = "sans-serif-light";
+    private static final String FONT_FAMILY_CONDENSED = "sans-serif-condensed";
+    private static final double DISTANCE_THRESHOLD = 20.0;
+    private static final int DEFAULT_STYLE = 1;
 
     private TelephonyManager mTelephonyManager;
     private BaseStatusBar mStatusBar;
@@ -124,7 +133,8 @@ public class NotificationHelper {
         NotificationClicker intent = null;
         final PendingIntent contentIntent = entry.notification.getNotification().contentIntent;
         if (contentIntent != null) {
-            boolean makeFloating = floating
+            boolean makeFloating = floating			        
+                    && !isNotificationBlacklisted(entry.notification.getPackageName())
                     // if the notification is from the foreground app, don't open in floating mode
                     && !entry.notification.getPackageName().equals(getForegroundPackageName())
                     && openInFloatingMode();
@@ -148,6 +158,53 @@ public class NotificationHelper {
             intent.makeFloating(makeFloating);
         }
         return intent;
+    }
+	
+	public void applyStyle(SizeAdaptiveLayout layout, int style) {
+        ViewGroup notificationView = ((ViewGroup) layout);
+        if (notificationView.getBackground() == null) {
+            // if the notification has no background, use default notification background
+            notificationView.setBackgroundResource(com.android.internal.R.drawable.notification_bg);
+-        }
+
+        List<View> subViews = getAllViewsInLayout(notificationView);
+-        for(int i = 0; i < subViews.size(); i++) {
+            View v = subViews.get(i);
+            else if (v instanceof TextView) { // set font family
+                boolean title = v.getId() == android.R.id.title;
+                boolean bold = title;
+                TextView text = ((TextView) v);
+                text.setTypeface(Typeface.create(
+                        forHover ? FONT_FAMILY_CONDENSED :
+                                (title ? FONT_FAMILY_LIGHT : FONT_FAMILY_DEFAULT),
+                                        bold ? Typeface.BOLD : Typeface.NORMAL));
+            }
+        }
+    }
+
+    public void setViewBackgroundAlpha(View v, int alpha) {
+        Drawable bg = v.getBackground();
+        if(bg != null) bg.setAlpha(alpha);
+    }
+
+    private boolean hasButtons(ViewGroup layout) {
+        List<View> views = getAllViewsInLayout(layout);
+        for(View v : views) {
+            if (v instanceof Button) return true;
+        }
+        return false;
+    }
+
+    private List<View> getAllViewsInLayout(ViewGroup layout) {
+        List<View> viewList = new ArrayList<View>();
+        for(int i = 0; i < layout.getChildCount(); i++) {
+            View v = layout.getChildAt(i);
+            if (v instanceof ViewGroup) {
+                viewList.addAll(getAllViewsInLayout((ViewGroup) v));
+            }
+            viewList.add(v);
+        }
+        return viewList;
     }
 
     public static String getNotificationTitle(StatusBarNotification n) {
